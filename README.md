@@ -1,34 +1,114 @@
-# 本地 TXT 到 LoRA 实验项目
+# AI Character Local LoRA Lab
 
-流程：
+这是一个本地 TXT 到个性化 AI 训练的实验项目。前端上传 `.txt` 文件，后端通过 ChatGPT 辅助生成 JSONL 训练数据，再用本地 LoRA 流程训练并加载角色模型。
 
-1. 前端上传 `.txt`
-2. 后端保存 `uploads/source.txt`，生成 `work/prompt.txt`
-3. Playwright 打开 ChatGPT，你手动登录
-4. 脚本在聊天框输入 prompt，并通过 ChatGPT 的添加文件入口上传你的 txt 文件
-5. 脚本尝试点击下载链接并保存 `datasets/train.jsonl`
-6. 如果页面没有真实下载链接，脚本会从 ChatGPT 响应文本中提取 JSONL 并保存到同一路径
-7. 后端读取前 10 条保存 `datasets/preview.json`
-8. 校验通过后启动本地 LoRA 微调
-9. 微调完成后加载模型，网页聊天窗口开始对话
+## 功能流程
+
+1. 在前端为 AI 命名并上传 `.txt` 文件。
+2. 后端保存原文到 `uploads/source.txt`，并生成 `work/prompt.txt`。
+3. Playwright 打开 ChatGPT，你在浏览器中手动登录。
+4. 脚本把 prompt 输入 ChatGPT，并上传 txt 文件。
+5. 脚本下载或提取 JSONL，保存到 `datasets/<AI名称>.jsonl`。
+6. 后端校验 JSONL，并生成 `datasets/<AI名称>.preview.json`。
+7. 校验通过后启动本地 LoRA 微调。
+8. 训练完成后模型保存到 `models/<AI名称>/`，网页聊天窗口可以加载并对话。
+
+## 目录说明
+
+```text
+backend/                         FastAPI 后端和训练流程
+frontend/                        前端页面
+chatgpt-login-only-extension/    ChatGPT 登录辅助扩展
+tools/                           本地安装包构建脚本
+start-edge-cdp.ps1               启动 Edge 调试浏览器
+start-chrome-cdp.ps1             启动 Chrome 调试浏览器
+```
+
+以下目录是本地生成内容，不会提交到 Git：
+
+```text
+backend/.venv/
+uploads/
+work/
+datasets/
+models/
+frontend/downloads/
+edge-cdp-profile/
+chrome-cdp-profile/
+playwright-profile/
+msedge-cdp-profile/
+```
+
+## 安装后端依赖
+
+在 PowerShell 中执行：
+
+```powershell
+cd C:\Users\dell\Desktop\ai_web_project\backend
+py -3.12 -m venv .venv
+.\.venv\Scripts\python -m pip install --upgrade pip
+.\.venv\Scripts\python -m pip install -r requirements.txt
+.\.venv\Scripts\python -m playwright install chromium
+```
+
+如果你的电脑没有 Python 3.12，可以把 `py -3.12` 换成 `python`。
 
 ## 启动后端
 
 ```powershell
 cd C:\Users\dell\Desktop\ai_web_project\backend
-.\.venv\Scripts\python -m pip install -r requirements.txt
-.\.venv\Scripts\python -m playwright install chromium
 .\.venv\Scripts\python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-## 选择打开 ChatGPT 的浏览器
+后端启动后可以打开：
 
-点击前端“打开 ChatGPT 生成 train.jsonl”时，前端会根据你当前打开本地网页的浏览器自动选择：
+```text
+http://127.0.0.1:8000/app/
+```
 
-- 用 Edge 打开本地网页，则 Playwright 尝试用 Microsoft Edge 打开 ChatGPT
-- 用 Chrome 打开本地网页，则 Playwright 尝试用 Google Chrome 打开 ChatGPT
+也可以直接打开前端文件：
 
-如果自动识别不到，会使用默认值。
+```text
+C:\Users\dell\Desktop\ai_web_project\frontend\index.html
+```
+
+## 使用调试浏览器连接 ChatGPT
+
+推荐先启动带调试端口的 Edge 或 Chrome，然后在这个浏览器窗口里手动登录 ChatGPT。
+
+启动 Edge：
+
+```powershell
+cd C:\Users\dell\Desktop\ai_web_project
+.\start-edge-cdp.ps1
+```
+
+启动 Chrome：
+
+```powershell
+cd C:\Users\dell\Desktop\ai_web_project
+.\start-chrome-cdp.ps1
+```
+
+默认调试地址：
+
+```text
+http://127.0.0.1:9222
+```
+
+如果只允许连接调试浏览器，不希望连接失败后自动启动新浏览器：
+
+```powershell
+$env:CHATGPT_CONNECT_MODE="cdp"
+```
+
+默认模式是：
+
+```powershell
+$env:CHATGPT_CONNECT_MODE="cdp-first"
+```
+
+## 选择浏览器
 
 默认使用 Microsoft Edge：
 
@@ -48,88 +128,39 @@ $env:CHATGPT_BROWSER="chrome"
 $env:CHATGPT_BROWSER="chromium"
 ```
 
-## 使用远程调试浏览器连接
+## LoRA 训练
 
-这是最接近手动操作的方式。先启动一个带调试端口的 Edge 或 Chrome，在这个窗口里手动登录 ChatGPT，然后脚本会连接这个窗口继续操作。
-
-前端已经提供按钮方式：
-
-1. 打开本地网页
-2. 点击“启动调试浏览器”
-3. 在新打开的 Edge/Chrome 窗口里登录 ChatGPT
-4. 回到本地网页点击“2 打开 ChatGPT 生成 train.jsonl”
-
-调试浏览器启动时会自动加载本地扩展：
-
-```text
-chatgpt-login-only-extension
-```
-
-这个扩展只在 ChatGPT/OpenAI 登录相关页面生效。未登录时会弱化无关内容、突出登录/继续/验证相关按钮；检测到聊天输入框后会自动恢复正常页面。
-
-也可以手动运行脚本：
-
-启动 Edge：
+训练前需要安装额外依赖：
 
 ```powershell
-cd C:\Users\dell\Desktop\ai_web_project
-.\start-edge-cdp.ps1
+cd C:\Users\dell\Desktop\ai_web_project\backend
+.\.venv\Scripts\python -m pip install -r requirements-train.txt
 ```
 
-启动 Chrome：
-
-```powershell
-cd C:\Users\dell\Desktop\ai_web_project
-.\start-chrome-cdp.ps1
-```
-
-然后在打开的浏览器窗口里登录 ChatGPT。登录完成后，回到本地网页点击“2 打开 ChatGPT 生成 train.jsonl”。
-
-默认连接地址：
-
-```text
-http://127.0.0.1:9222
-```
-
-如果你只想使用远程调试连接，不希望连接失败后回退到自动启动浏览器：
-
-```powershell
-$env:CHATGPT_CONNECT_MODE="cdp"
-```
-
-默认是：
-
-```powershell
-$env:CHATGPT_CONNECT_MODE="cdp-first"
-```
-
-## 打开前端
-
-直接用浏览器打开：
-
-```text
-C:\Users\dell\Desktop\ai_web_project\frontend\index.html
-```
-
-## 启动 LoRA 前设置基础模型
-
-把 `BASE_MODEL` 设置为本地模型路径或 Hugging Face 模型名：
+默认基础模型是代码中的 `Qwen/Qwen3-4B-Instruct-2507`。也可以手动设置：
 
 ```powershell
 $env:BASE_MODEL="C:\models\your-base-model"
 ```
 
-需要安装训练依赖：
+训练输出会保存在：
 
-```powershell
-.\.venv\Scripts\python -m pip install -r requirements-train.txt
+```text
+models/<AI名称>/
 ```
 
-## 生成文件
+## 本地安装包
 
-- `uploads/source.txt`
-- `work/prompt.txt`
-- `datasets/train.jsonl`
-- `datasets/preview.json`
-- `models/lora`
-- `playwright-profile`
+`frontend/index.html` 中有下载安装包入口，但 `frontend/downloads/` 属于生成文件目录，没有提交到 GitHub。
+
+需要重新生成安装包时运行：
+
+```powershell
+cd C:\Users\dell\Desktop\ai_web_project
+.\tools\build-local-agent-package.ps1
+.\tools\build-windows-installer.ps1
+```
+
+## Git 说明
+
+仓库已经配置 `.gitignore`，不会上传虚拟环境、模型、数据集、浏览器 profile、安装包和临时工作目录。需要共享大模型或数据集时，建议使用单独的网盘、Release 附件或 Git LFS。
