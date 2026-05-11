@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "ChatGPT Login Focus",
+  "version": "0.1.0",
+  "description": "Focus ChatGPT login screens for local automation experiments.",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://auth.openai.com/*",
+        "https://*.auth.openai.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["style.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>实验台</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-block">
+      <div class="brand">实验台</div>
+    </div>
+    <nav class="tabs" aria-label="主导航">
+      <button class="tab active" type="button" data-tab="chat">AI聊天</button>
+      <button class="tab" type="button" data-tab="training">个性化AI训练</button>
+    </nav>
+    <div class="agent-bar" aria-label="通信模式">
+      <div class="agent-modes">
+        <button class="agent-mode active" type="button" id="serverModeButton">服务器端</button>
+        <button class="agent-mode" type="button" id="localModeButton">本地通信</button>
+      </div>
+      <button class="agent-check" type="button" id="agentCheckButton">检测</button>
+      <a class="agent-download" id="agentDownloadLink" href="downloads/LocalAgentSetup.exe" download>下载安装包</a>
+      <a class="agent-start" id="agentStartLink" href="local-agent://start">启动</a>
+      <span class="agent-status" id="agentStatus">服务器端</span>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="view active" id="chatView">
+      <div class="model-toolbar">
+        <div class="model-menu">
+          <button class="ghost model-menu-button" type="button" id="modelMenuButton">选择模型</button>
+          <div class="model-menu-list" id="modelMenuList">
+            <button type="button" data-model="sample">毛泽东AI</button>
+            <button type="button" data-model="personal">个性化AI</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-stage">
+        <div id="messages" class="messages">
+          <div class="message assistant">模型加载完成后，可以在这里开始对话。</div>
+        </div>
+
+        <div class="chat-row">
+          <input id="chatInput" type="text" placeholder="输入消息" />
+          <button type="button" id="sendButton" aria-label="发送">↑</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="trainingView">
+      <section class="panel">
+        <div class="panel-header">
+          <button class="stop-refresh-button" type="button" id="stopRefreshButton">不想运行了</button>
+          <label class="ai-name-badge" for="aiNameInput">
+            <input id="aiNameInput" type="text" placeholder="1.请点击这里为AI命名" />
+          </label>
+        </div>
+
+        <div class="training-layout">
+          <div class="training-left">
+            <label class="drop-zone" for="fileInput">
+              <span id="fileLabel">2.点击这里上传txt文件</span>
+              <input type="file" id="fileInput" accept=".txt,text/plain" />
+            </label>
+            <span class="ai-name-toast" id="aiNameToast">请先为你的AI命名</span>
+
+            <div class="pipeline-progress" aria-live="polite">
+              <div class="progress-ring" id="progressRing">
+                <span id="progressValue">0%</span>
+              </div>
+              <div class="progress-step" id="progressStep">等待上传文件</div>
+            </div>
+          </div>
+
+          <div class="browser-preview"></div>
+        </div>
+
+        <pre id="result" aria-live="polite">等待操作...</pre>
+      </section>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

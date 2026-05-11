@@ -1,0 +1,45 @@
+# Python virtual environments and caches
+.venv/
+venv/
+env/
+.git-local-backup/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Node/frontend dependencies and build output
+node_modules/
+dist/
+build/
+.next/
+.vite/
+
+# Local browser automation profiles
+msedge-cdp-profile/
+playwright-profile/
+
+# Generated packages, installers, downloads, and runtime copies
+work/
+frontend/downloads/
+local-agent-package/
+*.zip
+*.exe
+*.msi
+
+# Large/local app data
+uploads/
+datasets/
+models/
+
+# IDE and OS metadata
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs and local env files
+*.log
+.env
+.env.*
+!.env.example

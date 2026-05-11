@@ -1,0 +1,40 @@
+.cgl-badge {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2147483647;
+  padding: 8px 10px;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font: 12px/1.2 Arial, sans-serif;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.14);
+  pointer-events: none;
+}
+
+html.cgl-login-mode body > *:not(.cgl-keep) {
+  opacity: 0.12 !important;
+  filter: grayscale(1) !important;
+  pointer-events: none !important;
+}
+
+html.cgl-login-mode .cgl-keep {
+  opacity: 1 !important;
+  filter: none !important;
+  pointer-events: auto !important;
+}
+
+html.cgl-login-mode .cgl-keep button,
+html.cgl-login-mode .cgl-keep a,
+html.cgl-login-mode .cgl-keep input,
+html.cgl-login-mode .cgl-keep [role="button"] {
+  outline: 3px solid rgba(37, 99, 235, 0.35) !important;
+  outline-offset: 3px !important;
+}
+
+html.cgl-soft-mode body > * {
+  opacity: 1 !important;
+  filter: none !important;
+  pointer-events: auto !important;
+}
