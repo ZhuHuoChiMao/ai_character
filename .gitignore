@@ -21,7 +21,7 @@ playwright-profile/
 
 # Generated packages, installers, downloads, and runtime copies
 work/
-frontend/downloads/
+src/frontend/downloads/
 local-agent-package/
 *.zip
 *.exe
