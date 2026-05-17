@@ -1,1 +1,5 @@
-你好，微调以及测试代码在ai_character.ipynb中查看。关注Qwen3测试以及Qwen3position测试中的上下文关注测试。Src是网页与后端微调训练的相关代码，在开发中。。。。
+Hello, the fine-tuning and testing code can be found in ai_character.ipynb.
+
+Please focus on the context attention tests in the Qwen3 Test and Qwen3 Position Test sections.
+
+The src directory contains the web frontend, backend, and fine-tuning training related code, which is still under development.
